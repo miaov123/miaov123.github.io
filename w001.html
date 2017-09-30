@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>详解 CORS 跨域资源共享</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+    <style>
+        .jz {
+            position: absolute;
+            left: 50%;
+            top: 5%;
+            transform: translate(-50%, -50%)
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div class="container">
+        <div class="text-center row" style="margin-top: 30px;">
+            <p><strong>原文地址:http://www.cnblogs.com/onepixel/articles/7568001.html</strong></p>
+            <p>CORS是一个W3C标准，全称是"跨域资源共享"（Cross-origin resource sharing）。</p>
+            <p>它允许浏览器向跨源服务器，发出XMLHttpRequest请求，从而克服了AJAX只能同源使用的限制。</p>
+            <p>本文详细介绍CORS的内部机制。</p>
+        </div>
+        <div class="row">
+            <h2>一、简介</h2>
+            <p class="lead">
+                CORS需要浏览器和服务器同时支持。目前，所有浏览器都支持该功能，IE浏览器不能低于IE10。<br>
+                整个CORS通信过程，都是浏览器自动完成，不需要用户参与。对于开发者来说，CORS通信与同源的AJAX通信没有差别，代码完全一样。浏览器一旦发现AJAX请求跨源，就会自动添加一些附加的头信息，有时还会多出一次附加的请求，但用户不会有感觉。<br>
+                因此，实现CORS通信的关键是服务器。只要服务器实现了CORS接口，就可以跨源通信。<br>
+            </p>
+            <div class="row">
+                <h2>二、两种请求</h2>
+                <p class="lead">浏览器将CORS请求分成两类：简单请求（simple request）和非简单请求（not-so-simple request）。</p>
+                <p class="lead">只要同时满足以下两大条件，就属于简单请求。</p>
+                <p class="lead">（2）HTTP的头信息不超出以下几种字段：</p>
+                <ul>
+                    <li>HEAD</li>
+                    <li>GET</li>
+                    <li>POST</li>
+                </ul>
+            </div>
+            <div class="row">
+                <p class="lead">（2）HTTP的头信息不超出以下几种字段：</p>
+                <ul>
+                    <li>Accept</li>
+                    <li>Accept-Language</li>
+                    <li>Content-Language</li>
+                    <li>Last-Event-ID</li>
+                    <li>Content-Type：只限于三个值application/x-www-form-urlencoded、multipart/form-data、text/plain</li>
+                </ul>
+                <p><strong>是不同时满足上面两个条件，就属于非简单请求。</strong></p>
+                <p><strong>凡是浏览器对这两种请求的处理，是不一样的。</strong></p>
+            </div>
+            <div class="row">
+                <h2>三、简单请求</h2>
+                <h3>3.1 基本流程</h3>
+                <p class="lead">对于简单请求，浏览器直接发出CORS请求。具体来说，就是在头信息之中，增加一个<mark>Origin</mark>字段。</p>
+                <p class="lead">下面是一个例子，浏览器发现这次跨源AJAX请求是简单请求，就自动在头信息之中，添加一个<mark>Origin字段</mark></p>
+                <pre>
+GET /cors HTTP/1.1
+Origin: http://api.bob.com
+Host: api.alice.com
+Accept-Language: en-US
+Connection: keep-alive
+User-Agent: Mozilla/5.0...
+                </pre>
+                <p class="lead">
+                    上面的头信息中，<mark>Origin</mark>字段用来说明，本次请求来自哪个源（协议 + 域名 + 端口）。服务器根据这个值，决定是否同意这次请求。
+                </p>
+                <p class="lead">
+                    如果Origin指定的源，不在许可范围内，服务器会返回一个正常的HTTP回应。浏览器发现，这个回应的头信息没有包含<mark>Access-Control-Allow-Origin</mark>字段（详见下文），就知道出错了，从而抛出一个错误，被<mark>XMLHttpRequest</mark>的onerror回调函数捕获。注意，这种错误无法通过状态码识别，因为HTTP回应的状态码有可能是200。
+                </p>
+                <p class="lead">如果<mark>Origin</mark>指定的域名在许可范围内，服务器返回的响应，会多出几个头信息字段。</p>
+                <pre>
+Access-Control-Allow-Origin: http://api.bob.com
+Access-Control-Allow-Credentials: true
+Access-Control-Expose-Headers: FooBar
+Content-Type: text/html; charset=utf-8
+                </pre>
+                <p class="lead">
+                    上面的头信息之中，有三个与CORS请求相关的字段，都以Access-Control-开头。
+                </p>
+                <h4>（1）Access-Control-Allow-Origin</h4>
+                <p class="lead">该字段是必须的。它的值要么是请求时<mark>Origin</mark>字段的值，要么是一个<mark>*</mark>，表示接受任意域名的请求。</p>
+                <h4>（2）Access-Control-Allow-Credentials</h4>
+                <p class="lead">该字段可选。它的值是一个布尔值，表示是否允许发送Cookie。默认情况下，Cookie不包括在CORS请求之中。设为<mark>true</mark>，即表示服务器明确许可，Cookie可以包含在请求中，一起发给服务器。这个值也只能设为<mark>true</mark>，如果服务器不要浏览器发送Cookie，删除该字段即可。</p>
+                <h4>（3）Access-Control-Expose-Headers</h4>
+                <p class="lead">
+                    该字段可选。CORS请求时，<mark>XMLHttpRequest</mark>对象的<mark>getResponseHeader()</mark>方法只能拿到6个基本字段：<mark>Cache-Control</mark>、<mark>Content-Language</mark>、<mark>Content-Type</mark>、<mark>Expires</mark>、<mark>Last-Modified</mark>、<mark>Pragma</mark>。如果想拿到其他字段，就必须在<mark>Access-Control-Expose-Headers</mark>里面指定。上面的例子指定，<mark>getResponseHeader('FooBar')</mark>可以返回<mark>FooBar</mark>字段的值。
+                </p>
+            </div>
+            <div class="row">
+                <h2>3.2 withCredentials 属性</h2>
+                <p class="lead">上面说到，CORS请求默认不发送Cookie和HTTP认证信息。如果要把Cookie发到服务器，一方面要服务器同意，指定<mark>Access-Control-Allow-Credentials字段。</mark></p>
+                <pre>Access-Control-Allow-Credentials: true</pre>
+                <p class="lead">另一方面，开发者必须在AJAX请求中打开<mark>withCredentials</mark>属性。</p>
+                <pre>var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;</pre>
+                <p class="lead">否则，即使服务器同意发送Cookie，浏览器也不会发送。或者，服务器要求设置Cookie，浏览器也不会处理。</p>
+                <p class="lead">但是，如果省略<mark>withCredentials</mark>设置，有的浏览器还是会一起发送Cookie。这时，可以显式关闭<mark>withCredentials</mark>。</p>
+                <pre>xhr.withCredentials = false;</pre>
+                <p class="lead">需要注意的是，如果要发送Cookie，<mark>Access-Control-Allow-Origin</mark>就不能设为星号，必须指定明确的、与请求网页一致的域名。同时，Cookie依然遵循同源政策，只有用服务器域名设置的Cookie才会上传，其他域名的Cookie并不会上传，且（跨源）原网页代码中的<mark>document.cookie</mark>也无法读取服务器域名下的Cookie。</p>
+            </div>
+            <div class="row">
+                <h2>四、非简单请求</h2>
+                <h3>4.1 预检请求</h3>
+                <p class="lead">非简单请求是那种对服务器有特殊要求的请求，比如请求方法是<mark>PUT</mark>或<mark>DELETE</mark>，或者<mark>Content-Type</mark>字段的类型是<mark>application/json。</mark></p>
+                <p class="lead">非简单请求的CORS请求，会在正式通信之前，增加一次HTTP查询请求，称为"预检"请求（preflight）。</p>
+                <p class="lead">浏览器先询问服务器，当前网页所在的域名是否在服务器的许可名单之中，以及可以使用哪些HTTP动词和头信息字段。只有得到肯定答复，浏览器才会发出正式的<mark>XMLHttpRequest</mark>请求，否则就报错。</p>
+                <p class="lead">下面是一段浏览器的JavaScript脚本。</p>
+                <pre>var url = 'http://api.alice.com/cors';
+var xhr = new XMLHttpRequest();
+xhr.open('PUT', url, true);
+xhr.setRequestHeader('X-Custom-Header', 'value');
+xhr.send();</pre>
+                <p class="lead">上面代码中，HTTP请求的方法是PUT，并且发送一个自定义头信息<mark>X-Custom-Header</mark>>。</p>
+                <p class="lead">浏览器发现，这是一个非简单请求，就自动发出一个"预检"请求，要求服务器确认可以这样请求。下面是这个"预检"请求的HTTP头信息。</p>
+               <pre>OPTIONS /cors HTTP/1.1
+Origin: http://api.bob.com
+Access-Control-Request-Method: PUT
+Access-Control-Request-Headers: X-Custom-Header
+Host: api.alice.com
+Accept-Language: en-US
+Connection: keep-alive
+User-Agent: Mozilla/5.0...</pre>
+                <p class="lead">"预检"请求用的请求方法是<mark>OPTIONS</mark>，表示这个请求是用来询问的。头信息里面，关键字段是<mark>Origin</mark>>，表示请求来自哪个源。</p>
+                <p class="lead">除了<mark>Origin</mark>字段，"预检"请求的头信息包括两个特殊字段。</p>
+                <p class="lead">（1）Access-Control-Request-Method</p>
+                <p class="lead">该字段是必须的，用来列出浏览器的CORS请求会用到哪些HTTP方法，上例是<mark>PUT</mark>。</p>
+                <p class="lead">（2）Access-Control-Request-Headers</p>
+                <p class="lead">该字段是一个逗号分隔的字符串，指定浏览器CORS请求会额外发送的头信息字段，上例是<mark>X-Custom-Header</mark>。</p>
+                <p class="lead">4.2 预检请求的回应</p>
+                <p class="lead">服务器收到"预检"请求以后，检查了<mark>Origin</mark>、<mark>Access-Control-Request-Method</mark>和<mark>Access-Control-Request-Headers</mark>字段以后，确认允许跨源请求，就可以做出回应。</p>
+                <pre>
+HTTP/1.1 200 OK
+Date: Mon, 01 Dec 2008 01:15:39 GMT
+Server: Apache/2.0.61 (Unix)
+Access-Control-Allow-Origin: http://api.bob.com
+Access-Control-Allow-Methods: GET, POST, PUT
+Access-Control-Allow-Headers: X-Custom-Header
+Content-Type: text/html; charset=utf-8
+Content-Encoding: gzip
+Content-Length: 0
+Keep-Alive: timeout=2, max=100
+Connection: Keep-Alive
+Content-Type: text/plain</pre>
+                <p class="lead">上面的HTTP回应中，关键的是<mark>Access-Control-Allow-Origin</mark>字段，表示<mark>http://api.bob.com</mark>可以请求数据。该字段也可以设为星号，表示同意任意跨源请求。</p>
+                <pre>Access-Control-Allow-Origin: *</pre>
+                <p class="lead">如果浏览器否定了"预检"请求，会返回一个正常的HTTP回应，但是没有任何CORS相关的头信息字段。这时，浏览器就会认定，服务器不同意预检请求，因此触发一个错误，被<mark>XMLHttpRequest</mark>对象的<makr>onerror</makr>回调函数捕获。控制台会打印出如下的报错信息。</p>
+                <pre>XMLHttpRequest cannot load http://api.alice.com.
+Origin http://api.bob.com is not allowed by Access-Control-Allow-Origin.</pre>
+                <p class="lead">服务器回应的其他CORS相关字段如下。</p>
+                <pre>Access-Control-Allow-Methods: GET, POST, PUT
+Access-Control-Allow-Headers: X-Custom-Header
+Access-Control-Allow-Credentials: true
+Access-Control-Max-Age: 1728000</pre>
+                <p class="lead">（1）Access-Control-Allow-Methods</p>
+                <p class="lead">该字段必需，它的值是逗号分隔的一个字符串，表明服务器支持的所有跨域请求的方法。注意，返回的是所有支持的方法，而不单是浏览器请求的那个方法。这是为了避免多次"预检"请求。</p>
+                <p class="lead">（2）Access-Control-Allow-Headers</p>
+                <p class="lead">如果浏览器请求包括<mark>Access-Control-Request-Headers</mark>字段，则Access-Control-Allow-Headers字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在"预检"中请求的字段。</p>
+                <p class="lead">（3）Access-Control-Allow-Credentials</p>
+                <p class="lead">该字段与简单请求时的含义相同。</p>
+                <p class="lead">（4）Access-Control-Max-Age</p>
+                <p class="lead">该字段可选，用来指定本次预检请求的有效期，单位为秒。上面结果中，有效期是20天（1728000秒），即允许缓存该条回应1728000秒（即20天），在此期间，不用发出另一条预检请求。</p>
+                <h3>4.3 浏览器的正常请求和回应</h3>
+                <p class="lead">一旦服务器通过了"预检"请求，以后每次浏览器正常的CORS请求，就都跟简单请求一样，会有一个<mark>Origin</mark>头信息字段。服务器的回应，也都会有一个<mark>Access-Control-Allow-Origin</mark>头信息字段。</p>
+                <p class="lead">下面是"预检"请求之后，浏览器的正常CORS请求。</p>
+                <pre>PUT /cors HTTP/1.1
+Origin: http://api.bob.com
+Host: api.alice.com
+X-Custom-Header: value
+Accept-Language: en-US
+Connection: keep-alive
+User-Agent: Mozilla/5.0...
+                </pre>
+                <p class="lead">上面头信息的<mark>Origin</mark>字段是浏览器自动添加的。</p>
+                <p class="lead">下面是服务器正常的回应。</p>
+                <pre>Access-Control-Allow-Origin: http://api.bob.com
+Content-Type: text/html; charset=utf-8</pre>
+                <p class="lead">上面头信息中，Access-Control-Allow-Origin字段是每次回应都必定包含的。</p>
+                <h2>五、与JSONP的比较</h2>
+                <p class="lead">CORS与JSONP的使用目的相同，但是比JSONP更强大。</p>
+                <p class="lead">JSONP只支持<mark>GET</mark>请求，CORS支持所有类型的HTTP请求。JSONP的优势在于支持老式浏览器，以及可以向不支持CORS的网站请求数据。</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

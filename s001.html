@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>视频页</title>
+    <script src="https://cdn.bootcss.com/vue/2.4.4/vue.js"></script>
+    <style>
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        ul li {
+            float: left;
+            margin-left: 5px;
+        }
+
+    </style>
+</head>
+<body>
+<div id="app">
+    <ul>
+        <li v-for="v,index in vv">
+            <div v-if="playIndex === index">
+                <video width="540px" controls="controls" autoplay @click="stop($event)">
+                    <source :src="v+'.mp4'" type="video/mp4">
+                </video>
+            </div>
+            <div v-else>
+                <img :src="v+'.png'" @click="imgClick(index)">
+            </div>
+        </li>
+    </ul>
+</div>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            playIndex: -1,
+            vv: [
+                's001',
+            ],
+        },
+        methods: {
+            imgClick(index){
+                this.playIndex = index;
+            },
+            stop(ev){
+                if (ev.target.paused) {
+                    ev.target.play();
+                } else {
+                    ev.target.pause();
+                }
+            }
+        }
+    });
+</script>
+</body>
+</html>

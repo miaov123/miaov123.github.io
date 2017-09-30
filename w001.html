@@ -60,14 +60,12 @@
                 <h3>3.1 基本流程</h3>
                 <p class="lead">对于简单请求，浏览器直接发出CORS请求。具体来说，就是在头信息之中，增加一个<mark>Origin</mark>字段。</p>
                 <p class="lead">下面是一个例子，浏览器发现这次跨源AJAX请求是简单请求，就自动在头信息之中，添加一个<mark>Origin字段</mark></p>
-                <pre>
-GET /cors HTTP/1.1
+                <pre>GET /cors HTTP/1.1
 Origin: http://api.bob.com
 Host: api.alice.com
 Accept-Language: en-US
 Connection: keep-alive
-User-Agent: Mozilla/5.0...
-                </pre>
+User-Agent: Mozilla/5.0...</pre>
                 <p class="lead">
                     上面的头信息中，<mark>Origin</mark>字段用来说明，本次请求来自哪个源（协议 + 域名 + 端口）。服务器根据这个值，决定是否同意这次请求。
                 </p>
@@ -75,12 +73,10 @@ User-Agent: Mozilla/5.0...
                     如果Origin指定的源，不在许可范围内，服务器会返回一个正常的HTTP回应。浏览器发现，这个回应的头信息没有包含<mark>Access-Control-Allow-Origin</mark>字段（详见下文），就知道出错了，从而抛出一个错误，被<mark>XMLHttpRequest</mark>的onerror回调函数捕获。注意，这种错误无法通过状态码识别，因为HTTP回应的状态码有可能是200。
                 </p>
                 <p class="lead">如果<mark>Origin</mark>指定的域名在许可范围内，服务器返回的响应，会多出几个头信息字段。</p>
-                <pre>
-Access-Control-Allow-Origin: http://api.bob.com
+                <pre>Access-Control-Allow-Origin: http://api.bob.com
 Access-Control-Allow-Credentials: true
 Access-Control-Expose-Headers: FooBar
-Content-Type: text/html; charset=utf-8
-                </pre>
+Content-Type: text/html; charset=utf-8</pre>
                 <p class="lead">
                     上面的头信息之中，有三个与CORS请求相关的字段，都以Access-Control-开头。
                 </p>

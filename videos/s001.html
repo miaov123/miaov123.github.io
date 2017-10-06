@@ -25,12 +25,12 @@
     <ul>
         <li v-for="v,index in vv">
             <div v-if="playIndex === index">
-                <video width="540px" controls="controls" autoplay @click="stop($event)">
-                    <source :src="'../assets/videos/'+v+'.mp4'" type="video/mp4">
+                <video width="540" height="960" controls="controls" autoplay @click="stop($event)">
+                    <source :src="'http://7xq80z.com1.z0.glb.clouddn.com/'+v+'.mp4'" type="video/mp4">
                 </video>
             </div>
             <div v-else>
-                <img :src="'../assets/vimgs/'+v+'.PNG'" @click="imgClick(index)">
+                <img width="540" height="960" :src="'http://7xq80z.com1.z0.glb.clouddn.com/'+v+'.PNG'" @click="imgClick(index)">
             </div>
         </li>
     </ul>

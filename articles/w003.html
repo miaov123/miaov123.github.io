@@ -6,12 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>session设置</title>
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="../assets/css/agate.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+    <script >hljs.initHighlightingOnLoad();</script>
     <style>
-        .t-red {
-            color: #d14;
+        pre{
+            padding:0;
         }
     </style>
 </head>
@@ -26,24 +27,24 @@
         <h2>Session 的存储方式</h2>
         <p class="lead">在 php.ini 文件中，进行配置。</p>
         <p class="lead"><strong>涉及配置参数：</strong></p>
-        <pre> - session.save_handler
+        <pre><code class="php"> - session.save_handler
 
- - session.save_path</pre>
+ - session.save_path</code></pre>
         <p class="lead">注意：这两个参数可以在 PHP 中通过 ini_set 来设置，不用直接覆盖原 php.ini 中的值。</p>
         <h2>一、文件存储</h2>
-        <pre>session.save_handler = files
+        <pre><code class="php">session.save_handler = files
 
-session.save_path = "N;MODE;/path"</pre>
+session.save_path = "N;MODE;/path"</code></pre>
         <p class="lead"><strong>注释：</strong>N 表示多级目录，值为数字。MODE 表示创建的 Session 文件权限。/path 表示 Session 存储路径。</p>
         <p class="lead">这里我设置</p>
-        <pre>session.save_path = "2;600;/tmp/"</pre>
+        <pre><code class="php">session.save_path = "2;600;/tmp/"</code></pre>
         <p class="lead">重启PHP-FPM，然后写个测试脚本 test.php，代码里运行 session_start();</p>
         <p class="lead">结果报错</p>
-        <pre>PHP Warning:  session_start(): open(/tmp/h/p/sess_hpbfs95c9omtfn30h5lt43i597, O_RDWR) failed: No such file or directory
-</pre>
+        <pre><code class="php">PHP Warning:  session_start(): open(/tmp/h/p/sess_hpbfs95c9omtfn30h5lt43i597, O_RDWR) failed: No such file or directory
+</code></pre>
         <p class="lead">为什么呢？</p>
         <p class="lead">我们来看下PHP官网怎么说的吧</p>
-        <pre>此指令还有一个可选的 N 参数来决定会话文件分布的目录深度。例如，设定为 '5;/tmp' 将使创建的会话文件和路径类似于 /tmp/4/b/1/e/3/sess_4b1e384ad74619bd212e236e52a5a174If。
+        <pre><code class="php">此指令还有一个可选的 N 参数来决定会话文件分布的目录深度。例如，设定为 '5;/tmp' 将使创建的会话文件和路径类似于 /tmp/4/b/1/e/3/sess_4b1e384ad74619bd212e236e52a5a174If。
 
 要使用 N 参数，必须在使用前先创建好这些目录。
 
@@ -55,15 +56,15 @@ session.save_path = "N;MODE;/path"</pre>
 
 文件储存模块默认使用 mode 600 创建文件。通过 修改可选参数 MODE 来改变这种默认行为： N;MODE;/path ，其中 MODE 是 mode 的八进制表示。 MODE 设置不影响进程的掩码(umask)。
 
-Caution：使用以上描述的可选目录层级参数 N 时请注意，对于绝大多数站点，大于1或者2的值会不太合适——因为这需要创建大量的目录：例如，值设置为 3 需要在文件系统上创建 64^3 个目录，将浪费很多空间和 inode。仅仅在绝对肯定站点足够大时，才可以设置 N 大于2。</pre>
+Caution：使用以上描述的可选目录层级参数 N 时请注意，对于绝大多数站点，大于1或者2的值会不太合适——因为这需要创建大量的目录：例如，值设置为 3 需要在文件系统上创建 64^3 个目录，将浪费很多空间和 inode。仅仅在绝对肯定站点足够大时，才可以设置 N 大于2。</code></pre>
         <p class="lead">了解这些，我们就开始处理 Session 存储目录的创建了，注意子目录的权限问题。</p>
-        <pre>bash /path/to/mod_files.sh</pre>
+        <pre><code class="php">bash /path/to/mod_files.sh</code></pre>
         <p class="lead">使用多级目录的后果就是，你必须手动清理这些 Session。</p>
     </div>
     <div class="row">
         <h2>二、Redis</h2>
         <p class="lead">首先你得安装了 Redis 扩展</p>
-        <pre>session.save_handler = redis
+        <pre><code class="php">session.save_handler = redis
 
 //多节点
 session.save_path = "tcp://ip:port?auth=secret?weight=1&timeout=2.5,tcp://ip2:port2?weight=2"
@@ -72,9 +73,9 @@ session.save_path = "tcp://ip:port?auth=secret?weight=1&timeout=2.5,tcp://ip2:po
 session.save_path = "tcp://ip:port?auth=secret?weight=1&timeout=2.5"
 
 //socket 方式
-session.save_path = "unix:///var/run/redis/redis.sock?persistent=1&weight=1&database=0</pre>
+session.save_path = "unix:///var/run/redis/redis.sock?persistent=1&weight=1&database=0</code></pre>
         <p class="lead">解释一下，涉及参数的含义：</p>
-        <pre>ip: Redis 节点的 IP。
+        <pre><code class="php">ip: Redis 节点的 IP。
 
 port: Redis 节点的端口。
 
@@ -88,10 +89,10 @@ persistent: 持久连接。
 
 prefix: 前缀，默认是 "PHPREDIS_SESSION:"。
 
-database: 选择哪个 Redis 数据库。取值：int。参见 Redis 配置 databases 16。</pre>
+database: 选择哪个 Redis 数据库。取值：int。参见 Redis 配置 databases 16。</code></pre>
         <p class="lead">重启PHP-FPM，然后写个测试脚本 test.php，代码里运行 session_start();</p>
         <p class="lead">我们看看效果</p>
-        <pre>redis-cli
+        <pre><code class="php">redis-cli
 
 127.0.0.1:6379> KEYS *
 1) "PHPREDIS_SESSION:fi08i7ms4rtrdsb6n1oqb0fek2"
@@ -103,12 +104,12 @@ string
 "admin_user|a:3:{s:8:\"username\";s:4:\"test\";s:4:\"name\";s:4:\"test";s:5:\"email\";s:12:\"test@test.cn\";}"
 
 127.0.0.1:6379> ttl "PHPREDIS_SESSION:fi08i7ms4rtrdsb6n1oqb0fek2"
-(integer) 292</pre>
+(integer) 292</code></pre>
         <p class="lead">可以看到 Session 存入了 Redis 中，数据结构用的是 String。</p>
         <p class="lead"><strong>Session 的过期时间</strong></p>
-        <pre>使用 php.ini 中的 session.gc_maxlifetime
+        <pre><code class="php">使用 php.ini 中的 session.gc_maxlifetime
 
-可以通过 ini_set 在 php 中自定义。</pre>
+可以通过 ini_set 在 php 中自定义。</code></pre>
         <p class="lead"><strong>多机房的 Redis 存储怎么弄？</strong></p>
         <p class="lead">同步呗！</p>
     </div>

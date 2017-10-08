@@ -1,10 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-cn">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>php 解决session过期数据丢失</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/css/agate.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <style>
+        pre {
+            padding: 0;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="row">
+            <h1>php 解决session过期数据丢失</h1>
+        </div>
+        <div class="row">
 
+            <h2>序列化session然后保存到cookie</h2>
+            <p class="lead">设置cookie保存1小时httponly为真防止js读取</p>
+            <pre><code class="php">setcookie('sessionData', $sData, time() + 3600, '/', '', false, true);</code></pre>
+        </div>
+        <div class="row">
+            <h2>怎么防止保存在cookie的数据不被窜改呢?</h2>
+            <p class="lead">对保存的数据加上<mark>数字签名</mark>,数字签名是什么呢?直接看代码</p>
+            <pre><code class="php">$data = serialize($_SESSION);
+$hash = hash_hmac('sha256', $data, '我是复杂的key', false);
+$hashData = $hash . $data;//签名已添加</code></pre>
+        </div>
+        <div class="row">
+            <h2>怎么恢复session?</h2>
+            <p class="lead">验证签名,恢复session</p>
+            <pre><code class="php">$sessionData = $_COOKIE['sessionData'];
+$d = substr($sessionData,64);//session数据 sha256的签名占64个字符
+$vData = hash_hmac('sha256', $d, '我是复杂的key', false);//在把数据加载一次
+if($sessionData == $vData){
+    echo '数据验证成功';
+    array_merge($_SESSION,unserialize($d)); //恢复数据到session
+}else{
+    echo '数据验证失败';
+}</code></pre>
+            <div class="row">
+                <h2>关于改进</h2>
+                <p class="lead">1,可以再session里加上<mark>过期时间</mark>,同时验证签名和过期时间</p>
+                <p class="lead">2,数据部分也可以用<mark>可逆加密算法</mark>加密,再签名.</p>
+                <p class="lead">3,cookie中尽量不要存储敏感信息</p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

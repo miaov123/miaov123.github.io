@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>用 JavaScript 检测浏览器在线/离线状态（JavaScript API — navigator.onLine）</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="../assets/css/agate.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+    <script >hljs.initHighlightingOnLoad();</script>
+    <style>
+        pre{
+            padding:0;
+        }
+    </style>
+</head>
+    <div class="container">
+        <div class="row">
+            <h1>用 JavaScript 检测浏览器在线/离线状态（JavaScript API — navigator.onLine）</h1>
+            <p class="lead">本文来源:<a href="http://www.css88.com/archives/8236" target="_blank">http://www.css88.com/archives/8236</a></p>
+            <p class="lead">
+                如今HTML5 移动应用或 Web app 中越来越普遍的使用了离线浏览技术，所以用 JavaScript 检测浏览器在线/离线状态非常常见。无论浏览器是否在线，navigator.onLine 属性都会提供一个布尔值。 如果浏览器在线，则设置为 true ，否则设置为 false 。
+            </p>
+            <pre><code class="js">if(navigator.onLine) { // true|false
+    // ...
+}</code></pre>
+        </div>
+        <div class="row">
+            <h2>online 和 offline 事件</h2>
+            <p class="lead">当浏览器脱机或上线时，浏览器还支持 online 和 offline 事件。</p>
+            <pre><code class="js">window.addEventListener('online', function(e){console.log('online')});
+window.addEventListener('offline', function(e){console.log('offline');});</code></pre>
+            <p class="lead">你可以使用几种熟悉的方式来注册事件：</p>
+            <ul>
+                <li>在 window，document，或 document.body 上使用 addEventListener</li>
+                <li>将 document 或 document.body 的 ononline 或 onoffline 属性设置为一个 JavaScript Function 对象。(注意：由于兼容性原因，不能使用 window.ononline 或  window.onoffline。)</li>
+                <li>在 HTML 标记中的 body 标签上指定 ononline=”…” 或 onoffline=”…” 特性。</li>
+            </ul>
+            <p class="lead">在线demo: http://www.css88.com/demo/navigator.onLine/ 你可以拔掉网线再插上网线试试</p>
+        </div>
+        <div class="row">
+            <h2>注意事项</h2>
+            <ul>
+                <li>IE8中需要给document.body绑定事件而不是window</li>
+                <li>在线离线的变化指的是物理上的网络链接变化，如果是在控制台将网络限制为 offline 则不会触发相应的事件。</li>
+                <li>
+                    <p>兼容性</p>
+                    <ul>
+                        <li>IE：8+</li>
+                        <li>Chrome：14+</li>
+                        <li>Firefox：3.5+（4-40存在bug，只有在 offline 模式下才会显示正确，否则onLine的值一直是true）</li>
+                        <li>Safari：5+</li>
+                    </ul>
+                </li>
+                <li>代替方案：<a href="https://stackoverflow.com/questions/14283124/navigator-online-not-always-working" target="_blank">https://stackoverflow.com/questions/14283124/navigator-online-not-always-working</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

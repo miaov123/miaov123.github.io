@@ -62,29 +62,31 @@ PUT /employees/56</code></pre>
                 <li><strong>删除：</strong>使用DELETE删除现有资源。</li>
             </ul>
             <p class="lead">2个URL乘以4个HTTP方法就是一组很好的功能。看看这个表格：</p>
-            <table class="table table-bordered">
-                <thead>
-                <th></th>
-                <th>POST（创建）</th>
-                <th>GET（读取）</th>
-                <th>PUT（更新）</th>
-                <th>DELETE（删除）</th>
-                </thead>
-                <tr>
-                    <td>/employees</td>
-                    <td>创建一个新员工</td>
-                    <td>列出所有员工</td>
-                    <td>批量更新员工信息</td>
-                    <td>删除所有员工</td>
-                </tr>
-                <tr>
-                    <td>/employees/56</td>
-                    <td>（错误）</td>
-                    <td>获取56号员工的信息</td>
-                    <td>更新56号员工的信息</td>
-                    <td>删除56号员工</td>
-                </tr>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-responsive">
+                    <thead>
+                    <th></th>
+                    <th>POST（创建）</th>
+                    <th>GET（读取）</th>
+                    <th>PUT（更新）</th>
+                    <th>DELETE（删除）</th>
+                    </thead>
+                    <tr>
+                        <td>/employees</td>
+                        <td>创建一个新员工</td>
+                        <td>列出所有员工</td>
+                        <td>批量更新员工信息</td>
+                        <td>删除所有员工</td>
+                    </tr>
+                    <tr>
+                        <td>/employees/56</td>
+                        <td>（错误）</td>
+                        <td>获取56号员工的信息</td>
+                        <td>更新56号员工的信息</td>
+                        <td>删除56号员工</td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -94,7 +96,7 @@ PUT /employees/56</code></pre>
             <p class="lead">创建一个新资源的时，客户端与服务器是怎么交互的呢？</p>
         </div>
         <div class="col-md-12">
-            <img class="image" src="../assets/images/restful01.webp" alt="">
+            <img class="img-responsive" src="../assets/images/restful01.webp" alt="">
             <p class="lead text-center">在资源集合URL上使用POST来创建新的资源过程</p>
         </div>
         <div class="col-md-12">
@@ -109,7 +111,7 @@ PUT /employees/56</code></pre>
             <h2>对具体资源的URL使用PUT方法，来更新资源</h2>
         </div>
         <div class="col-md-12">
-            <img class="image" src="../assets/images/restful02.webp" alt="">
+            <img class="img-responsive" src="../assets/images/restful02.webp" alt="">
             <p class="lead text-center">使用PUT更新已有资源。</p>
         </div>
         <div class="col-md-12">
@@ -128,7 +130,14 @@ PUT /employees/56</code></pre>
             <p class="lead">不推荐：</p>
             <pre><code class="php">/employee
 /employee/21</code></pre>
-            <p class="lead">事实上，这是个人爱好问题，但复数形式更为常见。此外，在资源集合URL上用GET方法，它更直观，特别是 <mark>GET/employees?state=external</mark>、 <mark>POST/employees</mark>、 <mark>PUT/employees/56</mark>。但最重要的是：避免复数和单数名词混合使用，这显得非常混乱且容易出错。</p>
+            <p class="lead">事实上，这是个人爱好问题，但复数形式更为常见。此外，在资源集合URL上用GET方法，它更直观，特别是
+                <mark>GET/employees?state=external</mark>
+                、
+                <mark>POST/employees</mark>
+                、
+                <mark>PUT/employees/56</mark>
+                。但最重要的是：避免复数和单数名词混合使用，这显得非常混乱且容易出错。
+            </p>
         </div>
     </div>
     <div class="row">
@@ -150,91 +159,107 @@ GET /internalAndSeniorEmployees</code></pre>
             <ul>
                 <li>2xx - 成功 - 一切都很好</li>
                 <li>4xx - 客户端错误 - 如果客户端发生错误（例如客户端发送无效请求或未被授权）</li>
-                <li>5xx – 服务器错误 - 如果服务器发生错误（例如，尝试处理请求时出错） 参考维基百科上的HTTP状态代码。但是，其中的大部分HTTP状态码都不会被用到，只会用其中的一小部分。通常会用到一下几个：</li>
+                <li>5xx – 服务器错误 - 如果服务器发生错误（例如，尝试处理请求时出错）
+                    参考维基百科上的HTTP状态代码。但是，其中的大部分HTTP状态码都不会被用到，只会用其中的一小部分。通常会用到一下几个：
+                </li>
             </ul>
-            <table class="table table-bordered">
-                <thead>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
                     <th>2xx：成功</th>
                     <th>3xx：重定向</th>
                     <th>4xx：客户端错误</th>
                     <th>5xx：服务器错误</th>
-                </thead>
-                <tr>
-                    <td>200 成功</td>
-                    <td>301 永久重定向</td>
-                    <td>400 错误请求</td>
-                    <td>500 内部服务器错误</td>
-                </tr>
-                <tr>
-                    <td>201 创建</td>
-                    <td>304 资源未修改</td>
-                    <td>401未授权</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td>403 禁止</td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td>404 未找到</td>
-                    <td></td>
-                </tr>
-            </table>
+                    </thead>
+                    <tr>
+                        <td>200 成功</td>
+                        <td>301 永久重定向</td>
+                        <td>400 错误请求</td>
+                        <td>500 内部服务器错误</td>
+                    </tr>
+                    <tr>
+                        <td>201 创建</td>
+                        <td>304 资源未修改</td>
+                        <td>401未授权</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>403 禁止</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>404 未找到</td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <h2>返回有用的错误提示</h2>
-            <p class="lead">除了合适的状态码之外，还应该在HTTP响应正文中提供有用的错误提示和详细的描述。这是一个例子。</p>
-            <p class="lead">请求：</p>
-            <pre><code class="php">GET /employees?state=super</code></pre>
-            <p class="lead">响应：</p>
-            <pre><code class="php">// 400 Bad Request
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h2>返回有用的错误提示</h2>
+        <p class="lead">除了合适的状态码之外，还应该在HTTP响应正文中提供有用的错误提示和详细的描述。这是一个例子。</p>
+        <p class="lead">请求：</p>
+        <pre><code class="php">GET /employees?state=super</code></pre>
+        <p class="lead">响应：</p>
+        <pre><code class="php">// 400 Bad Request
 {
     "message":
     "You submitted an invalid state. Valid state values are 'internal' or 'external'",
     "errorCode":352,
     "additionalInformation":"http://www.domain.com/rest/errorcode/352"
 }</code></pre>
-        </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <h2>使用小驼峰命名法</h2>
-            <p class="lead">使用小驼峰命名法作为属性标识符。</p>
-            <pre><code class="php">{ "yearOfBirth": 1982 }</code></pre>
-            <p class="lead">不要使用下划线（ <mark>year_of_birth</mark>）或大驼峰命名法（ <mark>YearOfBirth</mark>）。通常，RESTful Web服务将被JavaScript编写的客户端使用。客户端会将JSON响应转换为JavaScript对象（通过调用 <mark>varperson=JSON.parse(response)</mark>），然后调用其属性。因此，最好遵循JavaScript代码通用规范。</p>
-            <p class="lead">对比：</p>
-            <pre><code class="php">person.year_of_birth // 不推荐，违反JavaScript代码通用规范
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h2>使用小驼峰命名法</h2>
+        <p class="lead">使用小驼峰命名法作为属性标识符。</p>
+        <pre><code class="php">{ "yearOfBirth": 1982 }</code></pre>
+        <p class="lead">不要使用下划线（
+            <mark>year_of_birth</mark>
+            ）或大驼峰命名法（
+            <mark>YearOfBirth</mark>
+            ）。通常，RESTful Web服务将被JavaScript编写的客户端使用。客户端会将JSON响应转换为JavaScript对象（通过调用
+            <mark>varperson=JSON.parse(response)</mark>
+            ），然后调用其属性。因此，最好遵循JavaScript代码通用规范。
+        </p>
+        <p class="lead">对比：</p>
+        <pre><code class="php">person.year_of_birth // 不推荐，违反JavaScript代码通用规范
 person.YearOfBirth // 不推荐，JavaScript构造方法命名
 person.yearOfBirth // 推荐</code></pre>
-        </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <h2>在URL中强制加入版本号</h2>
-            <p class="lead">从始至终，都使用版本号发布您的RESTful API。将版本号放在URL中以是必需的。如果您有不兼容和破坏性的更改，版本号将让你能更容易的发布API。发布新API时，只需在增加版本号中的数字。这样的话，客户端可以自如的迁移到新API，不会因调用完全不同的新API而陷入困境。</p>
-            <p class="lead">使用直观的 “v” 前缀来表示后面的数字是版本号。</p>
-            <pre><code class="php">/v1/employees</code></pre>
-            <p class="lead">你不需要使用次级版本号（“v1.2”），因为你不应该频繁的去发布API版本。</p>
-        </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h2>在URL中强制加入版本号</h2>
+        <p class="lead">从始至终，都使用版本号发布您的RESTful
+            API。将版本号放在URL中以是必需的。如果您有不兼容和破坏性的更改，版本号将让你能更容易的发布API。发布新API时，只需在增加版本号中的数字。这样的话，客户端可以自如的迁移到新API，不会因调用完全不同的新API而陷入困境。</p>
+        <p class="lead">使用直观的 “v” 前缀来表示后面的数字是版本号。</p>
+        <pre><code class="php">/v1/employees</code></pre>
+        <p class="lead">你不需要使用次级版本号（“v1.2”），因为你不应该频繁的去发布API版本。</p>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <h2>提供分页信息</h2>
-            <p class="lead">一次性返回数据库所有资源不是一个好主意。因此，需要提供分页机制。通常使用数据库中众所周知的参数offset和limit。</p>
-            <pre><code class="php">/employees?offset=30&limit=15 #返回30 到 45的员工</code></pre>
-            <p class="lead">如果客户端没有传这些参数，则应使用默认值。通常默认值是 offset=0和 limit=10。如果数据库检索很慢，应当减小 <mark>limit</mark>值。</p>
-            <pre><code class="php">/employees #返回0 到 10的员工</code></pre>
-            <p class="lead">此外，如果您使用分页，客户端需要知道资源总数。例：</p>
-            <p class="lead">请求：</p>
-            <pre><code class="php">GET /employees</code></pre>
-            <p class="lead">响应：</p>
-            <pre><code class="php">{
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h2>提供分页信息</h2>
+        <p class="lead">一次性返回数据库所有资源不是一个好主意。因此，需要提供分页机制。通常使用数据库中众所周知的参数offset和limit。</p>
+        <pre><code class="php">/employees?offset=30&limit=15 #返回30 到 45的员工</code></pre>
+        <p class="lead">如果客户端没有传这些参数，则应使用默认值。通常默认值是 offset=0和 limit=10。如果数据库检索很慢，应当减小
+            <mark>limit</mark>
+            值。
+        </p>
+        <pre><code class="php">/employees #返回0 到 10的员工</code></pre>
+        <p class="lead">此外，如果您使用分页，客户端需要知道资源总数。例：</p>
+        <p class="lead">请求：</p>
+        <pre><code class="php">GET /employees</code></pre>
+        <p class="lead">响应：</p>
+        <pre><code class="php">{
     "offset": 0,
     "limit": 10,
     "total": 3465,
@@ -242,34 +267,43 @@ person.yearOfBirth // 推荐</code></pre>
         //...
     ]
 }</code></pre>
-        </div>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <h2>非资源请求用动词</h2>
-            <p class="lead">有时API调用并不涉及资源（如计算，翻译或转换）。例：</p>
-            <pre><code class="php">GET /translate?from=de_DE&to=en_US&text=Hallo
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h2>非资源请求用动词</h2>
+        <p class="lead">有时API调用并不涉及资源（如计算，翻译或转换）。例：</p>
+        <pre><code class="php">GET /translate?from=de_DE&to=en_US&text=Hallo
 GET /calculate?p2=23&p2=432</code></pre>
-            <p class="lead">在这种情况下，API响应不会返回任何资源。而是执行一个操作并将结果返回给客户端。因此，您应该在URL中使用动词而不是名词，来清楚的区分资源请求和非资源请求。</p>
-        </div>
+        <p class="lead">在这种情况下，API响应不会返回任何资源。而是执行一个操作并将结果返回给客户端。因此，您应该在URL中使用动词而不是名词，来清楚的区分资源请求和非资源请求。</p>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <h2>考虑特定资源搜索和跨资源搜索</h2>
-            <p class="lead">提供对特定资源的搜索很容易。只需使用相应的资源集合URL，并将搜索字符串附加到查询参数中即可。</p>
-            <pre><code class="php">GET /employees?query=Paul</code></pre>
-            <p class="lead">如果要对所有资源提供全局搜索，则需要用其他方法。前文提到，对于非资源请求URL，使用动词而不是名词。因此，您的搜索网址可能如下所示：</p>
-            <pre><code class="php">GET /search?query=Paul //返回 employees, customers, suppliers 等等.</code></pre>
-        </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h2>考虑特定资源搜索和跨资源搜索</h2>
+        <p class="lead">提供对特定资源的搜索很容易。只需使用相应的资源集合URL，并将搜索字符串附加到查询参数中即可。</p>
+        <pre><code class="php">GET /employees?query=Paul</code></pre>
+        <p class="lead">如果要对所有资源提供全局搜索，则需要用其他方法。前文提到，对于非资源请求URL，使用动词而不是名词。因此，您的搜索网址可能如下所示：</p>
+        <pre><code class="php">GET /search?query=Paul //返回 employees, customers, suppliers 等等.</code></pre>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <h2>在响应参数中添加浏览其它API的链接</h2>
-            <p class="lead">理想情况下，不会让客户端自己构造使用REST API的URL。让我们思考一个例子。客户端想要访问员工的薪酬表。为此，他必须知道他可以通过在员工URL（例如 <mark>/employees/21/salaryStatements</mark>）中附加字符串“salaryStatements”来访问薪酬表。这个字符串连接很容易出错，且难以维护。如果你更改了访问薪水表的REST API的方式（例如变成了 <mark>/employees/21/salary-statement</mark>或 <mark>/employees/21/paySlips</mark>），所有客户端都将中断。好的方案是在响应参数中添加一个 <mark>links</mark>字段，让客户端可以自动变更。</p>
-            <p class="lead">请求：</p>
-            <pre><code class="php">GET /employees/</code></pre>
-            <p class="lead">响应 :</p>
-            <pre><code class="php">//...
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h2>在响应参数中添加浏览其它API的链接</h2>
+        <p class="lead">理想情况下，不会让客户端自己构造使用REST API的URL。让我们思考一个例子。客户端想要访问员工的薪酬表。为此，他必须知道他可以通过在员工URL（例如
+            <mark>/employees/21/salaryStatements</mark>
+            ）中附加字符串“salaryStatements”来访问薪酬表。这个字符串连接很容易出错，且难以维护。如果你更改了访问薪水表的REST API的方式（例如变成了
+            <mark>/employees/21/salary-statement</mark>
+            或
+            <mark>/employees/21/paySlips</mark>
+            ），所有客户端都将中断。好的方案是在响应参数中添加一个
+            <mark>links</mark>
+            字段，让客户端可以自动变更。
+        </p>
+        <p class="lead">请求：</p>
+        <pre><code class="php">GET /employees/</code></pre>
+        <p class="lead">响应 :</p>
+        <pre><code class="php">//...
 {
     "id": 1,
     "name": "Paul",
@@ -281,9 +315,10 @@ GET /calculate?p2=23&p2=432</code></pre>
     ]
 },
 //...</code></pre>
-            <p class="lead">如果客户端完全依靠 links中的字段获得薪资表，你更改了API，客户端将始终获得一个有效的URL（只要你更改了 link字段，请求的URL会自动更改），不会中断。另一个好处是，你的API变得可以自我描述，需要写的文档更少。</p>
-            <p class="lead">在分页时，您还可以添加获取下一页或上一页的链接示例。只需提供适当的偏移和限制的链接示例。</p>
-            <pre><code class="php">GET /employees?offset=20&limit=10
+        <p class="lead">如果客户端完全依靠 links中的字段获得薪资表，你更改了API，客户端将始终获得一个有效的URL（只要你更改了
+            link字段，请求的URL会自动更改），不会中断。另一个好处是，你的API变得可以自我描述，需要写的文档更少。</p>
+        <p class="lead">在分页时，您还可以添加获取下一页或上一页的链接示例。只需提供适当的偏移和限制的链接示例。</p>
+        <pre><code class="php">GET /employees?offset=20&limit=10
 {
     "offset": 20,
     "limit": 10,
@@ -302,8 +337,8 @@ GET /calculate?p2=23&p2=432</code></pre>
         }
     ]
 }</code></pre>
-        </div>
     </div>
+</div>
 </div>
 </body>
 </html>

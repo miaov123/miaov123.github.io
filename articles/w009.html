@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ack文件(文本)搜索</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <style>
+        pre {
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>ack文件(文本)搜索</h2>
+            原文地址:<a href="http://liaofeng-xiao.iteye.com/blog/1739773"><em>http://liaofeng-xiao.iteye.com/blog/1739773</em></a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <p class="lead">ack可以用来替代grep 99%的的使用场景它很智能，只搜索它“认识”的文件比如：ab.c这中文件，ack是不会去搜索的</p>
+
+            <p class="lead">使用-a选项可以搜索所有的文件，但某些文件是永远都不会搜索的（除非在命令行中指定），比如备份文件。</p>
+
+            <p class="lead">[no]ignore-dir: ack会在制定目录下递归搜索文件夹，如果要忽略搜索某个文件件，使用--ignore-dir. 如果不忽略，使用--noignore-dir.</p>
+
+            <p class="lead">-a, --all: 搜索所有文件</p>
+
+            <p class="lead"><mark>-C：打印匹配文本前后的N行文字。-A(after)，打印匹配文本后面的N行，-B(befor)，打印匹配文本前面的N行。</mark></p>
+
+            <p class="lead">-c, --count: 覆盖正常输出，打印每个文件匹配文本的次数，没有匹配的文件输出0，可使用-l输出匹配的文件。</p>
+
+            <p class="lead">--column: 输出匹配的列，很少用到。</p>
+
+            <p class="lead">-f: 仅列出来会搜索哪些文件，不做真实的搜索</p>
+
+            <p class="lead">-G REGEXP：仅搜索匹配给定正则的文件</p>
+
+            <p class="lead">-g REGEXP: -f -G REGEXP的缩写</p>
+
+            <p class="lead">-i: ignore case</p>
+
+            <p class="lead">--[no]ignore-dir=xxx: 忽略搜索某个文件</p>
+
+            <p class="lead">--line=xxx: 只打印匹配文件的某些行，比如 ack Note . --line=3,4,5,6，或者--line=3-6</p>
+
+            <p class="lead">-l: 只输出有匹配的文件</p>
+
+            <p class="lead">-L: 只输出没有匹配的文件</p>
+
+            <p class="lead"><mark>-n: 不进行文件夹的递归搜索</mark></p>
+
+            <p class="lead">--type=TYPE /--type=noTYPE: 指定搜索要包括/排除的文件类型，可以使用--TYPE/noTYPE指定。比如搜索java文件： --java, 不搜索python文件： --nopython</p>
+
+            <p class="lead">--type-add TYPE=.EXTENSION[,.EXT2...]: EXTENSION和EXT2为扩展名的文件作为type的类型的文件。比如: --type-add python=.ptl，将ptl作为python文件。下次搜索使用--python时则会搜索.ptl文件</p>
+
+            <p class="lead">--type-set TYPE=ext[, ext2....]: 同上，但会覆盖原来的文件类型定义</p>
+
+            <p class="lead">-1: 只要搜索到第一次匹配就停止搜索</p>
+
+            <p class="lead">--help=types: 列出文件类型对应的扩展名</p>
+
+            <p class="lead">可以使用.ackrc作为ack的配置文件，定义匹配文字的颜色，新定义文件类型和匹配的扩展名等，这样就不用每次都在命令行中指定了。</p>
+
+            <p class="lead">--type-set=python=.py,.ptl</p>
+    </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PHP 线程安全与非线程安全版本的区别深入解析</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <style>
+        pre {
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <h1>PHP 线程安全与非线程安全版本的区别深入解析</h1>
+        <p class="lead">原文地址:<strong><a href="http://www.jb51.net/article/40339.htm" target="_blank">http://www.jb51.net/article/40339.htm</a></strong></p>
+        <p class="lead">从2000年10月20日发布的第一个Windows版的PHP3.0.17开始的都是线程安全的版本，这是由于与Linux/Unix系统是采用多进程的工作方式不同的是Windows系统是采用多线程的工作方式。如果在IIS下以CGI方式运行PHP会非常慢，这是由于CGI模式是建立在多进程的基础之上的，而非多线程。</p>
+        <p class="lead">一般我们会把PHP配置成以ISAPI的方式来运行，ISAPI是多线程的方式，这样就快多了。但存在一个问题，很多常用的PHP扩展是以Linux/Unix的多进程思想来开发的，这些扩展在ISAPI的方式运行时就会出错搞垮IIS。因此在IIS下CGI模式才是PHP运行的最安全方式，但CGI模式对于每个HTTP请求都需要重新加载和卸载整个PHP环境，其消耗是巨大的。</p>
+        <p class="lead">为了兼顾IIS下PHP的效率和安全，微软给出了FastCGI的解决方案。FastCGI可以让PHP的进程重复利用而不是每一个新的请求就重开一个进程。同时FastCGI也可以允许几个进程同时执行。这样既解决了CGI进程模式消耗太大的问题，又利用上了CGI进程模式不存在线程安全问题的优势。</p>
+        <p class="lead">因此，如果是使用ISAPI的方式来运行PHP就必须用Thread Safe(线程安全)的版本；而用FastCGI模式运行PHP的话就没有必要用线程安全检查了，用None Thread Safe(NTS，非线程安全)的版本能够更好的提高效率。</p>
+        <p class="lead">PHP官方http://php.net/上关于widows的版本有4个：VC9 x86 Non Thread Safe，VC9 x86 Thread Safe，VC6 x86 Non Thread Safe，VC6 x86 Thread Safe；那么有什么区别呢？</p>
+    </div>
+    <div class="row">
+        <h2>1.支持的服务器不同</h2>
+        <p class="lead">VC9版本是针对IIS服务器的版本，没有对APACHE的支持，而VC6版本对IIS和apache都提供了支持</p>
+        <h2 class="text-danger">VC6 是什么？</h2>
+        <p class="lead">VC6 就是 legacy Visual Studio 6 compiler ，就是使用这个编译器编译的。</p>
+        <h2 class="text-danger">VC9 是什么？</h2>
+        <p class="lead">VC9 就是 the Visual Studio 2008 compiler ，就是用微软的 VS 编辑器编译的。</p>
+        <p class="lead">如果你是在 windows 下使用 Apache+PHP 的，请选择 VC6 版本；</p>
+        <p class="lead">如果你是在 windows 下使用 IIS+PHP 的，请选择 VC9 版本；</p>
+    </div>
+    <div class="row">
+        <h2>2.运行方式的不同</h2>
+        <p class="lead">PHP有2中运行方式：ISAPI和FastCGI。</p>
+        <p class="lead">ISAPI执行方式是以DLL动态库的形式使用，可以在被用户请求后执行，在处理完一个用户请求后不会马上消失，所以需要进行线程安全检查，这样来提高程序的执行效率，所以如果是以ISAPI来执行PHP，建议选择Thread Safe版本；</p>
+        <p class="lead">而FastCGI执行方式是以单一线程来执行操作，所以不需要进行线程的安全检查，除去线程安全检查的防护反而可以提高执行效率，所以，如果是以FastCGI来执行PHP，建议选择Non Thread Safe版本。</p>
+        <p class="lead">对于apache服务器来说一般选择isapi方式，而对于nginx服务器则选择FastCGI方式。</p>
+    </div>
+</div>
+</body>
+</html>

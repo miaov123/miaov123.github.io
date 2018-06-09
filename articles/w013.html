@@ -37,47 +37,39 @@
 </nav>
 <div class="container">
     <div class="row">
-        <h1>PHP的CURLOPT_POSTFIELDS参数使用数组和字符串的区别</h1>
-        <p class="lead">原文地址:<a href="https://www.cnblogs.com/Alight/p/4330236.html" target="_blank"><strong>https://www.cnblogs.com/Alight/p/4330236.html</strong></a></p>
-        <h2>手册上解释：CURLOPT_POSTFIELDS </h2>
-        <p class="lead">全部数据使用HTTP协议中的"POST"操作来发送。要发送文件，在文件名前面加上@前缀并使用完整路径。这个参数可以通过urlencoded后的字符串类似'para1=val1&amp;para2=val2&amp;...<span
-                style="background: #fff;color:#f90">'或使用一个以字段名为键值，字段数据为值的数组。如果value是一个数组，Content-Type头将会设置成multipart/form-data。</span>
-        </p>
-    </div>
-    <div class="row">
-        <h2>PHP的CURL组件是非常常用的HTTP请求模拟器。</h2>
-        <p class="lead">正确使用方法：</p>
-        <p class="lead">通常要发送post数据时，我已经习惯于这样写：</p>
-        <p class="lead">curl_setopt( $ch, CURLOPT_POSTFIELDS,$post_data);</p>
-        <p class="lead">但是在向某一个服务器发送请求的时候，服务器返回500。而使用socket方式连接上去发送请求，返回正常的数据。</p>
-        <p class="lead">尝试发送到一个仅有&lt;?php print_r($_SERVER);?&gt;的网页上，可以看到使用数组发送POST数据时，收到的CONTENT_TYPE如下：</p>
-        <p class="lead">[CONTENT_TYPE] =&gt; multipart/form-data; boundary=—————————-f924413ea122</p>
-        <p class="lead">而使用http_build_query($post_data)，收到的CONTENT_TYPE如下：</p>
-        <p class="lead">[CONTENT_TYPE] =&gt; application/x-www-form-urlencoded</p>
-        <p class="lead">可见，当CURLOPT_POSTFIELDS被设置为数组时，HTTP头会发送Content_type: application/x-www-form-urlencoded。这个是正常的网页&lt;form&gt;提交表单时，浏览器发送的头部。而multipart/form-data我们知道这是用于上传文件的表单。包括了boundary分界符，会多出很多字节。</p>
-    </div>
-    <div class="row">
-        <h2>手册上提到：</h2>
-        <blockquote>
-            <p>The full data to post in a HTTP “POST” operation. To post a file, prepend a filename with @ and use the
-                full path. This can either be passed as a urlencoded string like ‘para1=val1&amp;para2=val2&amp;…’ or as
-                an array with the field name as key and field data as value. If value is an array, the Content-Type
-                header will be set to multipart/form-data.</p>
-        </blockquote>
-        <p class="lead">
-            使用数组提供post数据时，CURL组件大概是为了兼容@filename这种上传文件的写法，默认把content_type设为了multipart/form-data。虽然对于大多数web服务器并没有影响，但是还是有少部分服务器不兼容</p>
-        <p class="lead">本文得出的结论是，在没有需要上传文件的情况下，尽量对post提交的数据进行http_build_query，然后发送出去，能实现更好的兼容性，更小的请求数据包。</p>
+        <h1>linux目录的可执行权限的意义</h1>
 
     </div>
+
     <div class="row">
-        <p class="lead">备注：</p>
-        <p class="lead">string http_build_query ( mixed $query_data [, string $numeric_prefix [, string $arg_separator
-            [, int $enc_type = PHP_QUERY_RFC1738 ]]] )</p>
-        <p class="lead">使用给出的关联（或下标）数组生成一个经过URL-encode 的请求字符串。</p>
-        <p class="lead">curl发送post数据的时候，如果用http_build_query生成对应的post数据，则不用urlencode编码对应的字符串了</p>
-        <p class="lead">如果是手动拼接，则需要对中文手动用urlencode编码</p>
+        <h3> Linux的文件和目录的权限，只有RWX三种。</h3>
+        <table class="table">
+            <tr>
+                <th>文件\文件夹</th>
+                <th>R(Read)</th>
+                <th>W(Write)</th>
+                <th>X(Execute)</th>
+            </tr>
+            <tr>
+                <td><strong>文件</strong></td>
+                <td>读取文件内容</td>
+                <td>增,改,删文件内容</td>
+                <td>执行文件</td>
+            </tr>
+            <tr>
+                <td><strong>文件夹</strong></td>
+                <td>浏览目录</td>
+                <td>新建，删除，修改，移动目录内文件</td>
+                <td>进入目录</td>
+            </tr>
+        </table>
     </div>
-</div>
+    <div class="row">
+        <p class="lead">1、目录的只读访问不允许使用cd进入目录，必须要有执行的权限才能进入。</p>
+        <p class="lead">2、只有执行权限只能进入目录，不能看到目录下的内容，要想看到目录下的文件名和目录名，需要可读权限。</p>
+        <p class="lead">3、一个文件能不能被删除，主要看该文件所在的目录对用户是否具有写权限，如果目录对用户没有写权限，则该目录下的所有文件都不能被删除，文件所有者除外</p>
+        <p class="lead">4、目录的w位不设置，即使你拥有目录中某文件的w权限也不能写该文件,新建文件默认权限777，新建目录默认权限666。在unix或者linux中，每创建一个文件或者目录时，这个文件或者目录都具有一个默认的权限，比如目录755，文件644，这些默认权限是通过“umask”权限掩码控制的。一般默认的umask值为022，其最终效果就是新创建的目录权限为755，文件权限为644。所以只要修改了用户的umask值，就可以控制默认权限。</p>
+    </div>
 <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"
         integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
